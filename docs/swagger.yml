@@ -1,0 +1,175 @@
+swagger: "2.0"
+info:
+  title: "Xendit Coding Assessment"
+  description: "A REST API that facilitates the creation and retrieval of rides."
+  version: "1.0.0"
+host: "localhost:8010"
+basePath: "/"
+schemes:
+  - "http"
+  - "https"
+paths:
+  /health:
+    get:
+      summary: "Gets the health status of the service."
+      operationId: "getHealthStatus"
+      produces:
+        - "text/html"
+      responses:
+        200:
+          description: "The health check succeeded and the server is available."
+  /rides:
+    post:
+      summary: "Creates a new ride."
+      operationId: "createRide"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "JSON request body"
+          schema:
+            $ref: "#/definitions/CreateRideRequest"
+          required: true
+      responses:
+        200:
+          description: "The ride was successfully created."
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/definitions/RideObject"
+    get:
+      summary: "Gets a list of created rides."
+      operationId: "getRides"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "The rides were successfully retrieved."
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/definitions/RideObject"
+  /rides/{rideID}:
+    get:
+      summary: "Gets a single ride by its ID."
+      operationId: "getRideByID"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "rideID"
+          description: "ID of ride to fetch."
+          type: "number"
+          format: "int64"
+          required: true
+      responses:
+        200:
+          description: "The rides were successfully retrieved."
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/definitions/RideObject"
+definitions:
+  CreateRideRequest:
+    type: "object"
+    properties:
+      start_lat:
+        type: "number"
+        format: "float"
+        minimum: -90.0
+        maximum: 90.0
+        example: 48.858222
+      start_long:
+        type: "number"
+        format: "float"
+        minimum: -180.0
+        maximum: 180.0
+        example: 2.2945
+      end_lat:
+        type: "number"
+        format: "float"
+        minimum: -90.0
+        maximum: 90.0
+        example: 48.861111
+      end_long:
+        type: "number"
+        format: "float"
+        minimum: -180.0
+        maximum: 180.0
+        example: 2.335833
+      rider_name:
+        type: "string"
+        minLength: 1
+      driver_name:
+        type: "string"
+        minLength: 1
+      driver_vehicle:
+        type: "string"
+        minLength: 1
+    required:
+      - start_lat
+      - start_long
+      - end_lat
+      - end_long
+      - rider_name
+      - driver_name
+      - driver_vehicle
+  RideObject:
+    type: "object"
+    properties:
+      rideID:
+        type: "number"
+        format: "int64"
+        example: 1
+      startLat:
+        type: "number"
+        format: "float"
+        minimum: -90.0
+        maximum: 90.0
+        example: 48.858222
+      startLong:
+        type: "number"
+        format: "float"
+        minimum: -180.0
+        maximum: 180.0
+        example: 2.2945
+      endLat:
+        type: "number"
+        format: "float"
+        minimum: -90.0
+        maximum: 90.0
+        example: 48.861111
+      endLong:
+        type: "number"
+        format: "float"
+        minimum: -180.0
+        maximum: 180.0
+        example: 2.335833
+      riderName:
+        type: "string"
+        minLength: 1
+      driverName:
+        type: "string"
+        minLength: 1
+      driverVehicle:
+        type: "string"
+        minLength: 1
+      created:
+        type: string
+        format: "date-time"
+        example: "2021-09-18 13:21:28"
+    required:
+      - start_lat
+      - start_long
+      - end_lat
+      - end_long
+      - rider_name
+      - driver_name
+      - driver_vehicle
+      - created

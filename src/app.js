@@ -6,7 +6,13 @@ const app = express();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
+
+const swaggerDoc = YAML.load('./docs/swagger.yml');
+
 module.exports = (db) => {
+    app.use('/documentation', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
     app.get('/health', (req, res) => res.send('Healthy'));
 
     app.post('/rides', jsonParser, (req, res) => {
@@ -54,7 +60,7 @@ module.exports = (db) => {
         }
 
         var values = [req.body.start_lat, req.body.start_long, req.body.end_lat, req.body.end_long, req.body.rider_name, req.body.driver_name, req.body.driver_vehicle];
-        
+
         const result = db.run('INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)', values, function (err) {
             if (err) {
                 return res.send({
