@@ -23,5 +23,8 @@
   "devDependencies": {
     "mocha": "^6.1.4",
     "supertest": "^4.0.2"
+  },
+  "engines": {
+    "node": ">8.6.0 <=10.0.0"
   }
 }
