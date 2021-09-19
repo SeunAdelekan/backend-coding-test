@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "mocha tests",
-    "start": "node index.js"
+    "start": "node index.js",
+    "coverage": "nyc npm run test",
+    "prepare": "husky install"
   },
   "keywords": [
     "Xendit"
@@ -26,7 +28,9 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.24.2",
+    "husky": "^7.0.2",
     "mocha": "^6.1.4",
+    "nyc": "^15.1.0",
     "supertest": "^4.0.2"
   },
   "engines": {
