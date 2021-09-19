@@ -30,7 +30,10 @@ describe('API tests', () => {
   });
 
   describe('POST /rides', () => {
-    afterEach(() => sinon.restore());
+    afterEach(async () => {
+      sinon.restore();
+      await dbManager.cleanup();
+    });
 
     const payload = {
       start_lat: 48.858222,
@@ -89,6 +92,18 @@ describe('API tests', () => {
 
     it('should return a server error when a DB insertion fails', async () => {
       sinon.stub(db, 'run').yields(dbConnectionError);
+
+      const res = await createRide(payload);
+
+      expect(res.body).to.eql({
+        error_code: ERROR_CODE.SERVER_ERROR,
+        message: ERROR_MESSAGE.UNKNOWN_ERROR,
+      });
+    });
+
+    it('should return a server error when a DB selection fails after insertion', async () => {
+      sinon.stub(db, 'run').callsArgOnWith(2, { lastID: 1 }, false)
+      sinon.stub(db, 'all').yields(dbConnectionError);
 
       const res = await createRide(payload);
 

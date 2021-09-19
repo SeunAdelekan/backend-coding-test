@@ -12,7 +12,7 @@ module.exports = (db) => {
     });
   });
 
-  const cleanup = async () => db.run('DROP TABLE IF EXISTS Rides;');
+  const cleanup = async () => db.run('DELETE FROM Rides;');
 
   return { setup, cleanup };
 };

@@ -11,6 +11,8 @@ const YAML = require('yamljs');
 
 const swaggerDoc = YAML.load('./docs/swagger.yml');
 
+const logger = require('./util/logger');
+
 module.exports = (db) => {
   app.use('/documentation', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
   app.get('/health', (req, res) => res.send('Healthy'));
@@ -77,6 +79,7 @@ module.exports = (db) => {
       values,
       function onComplete(err) {
         if (err) {
+          logger.error(err);
           return res.send({
             error_code: 'SERVER_ERROR',
             message: 'Unknown error',
@@ -85,6 +88,7 @@ module.exports = (db) => {
 
         return db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, (error, rows) => {
           if (error) {
+            logger.error(error);
             return res.send({
               error_code: 'SERVER_ERROR',
               message: 'Unknown error',
@@ -100,6 +104,7 @@ module.exports = (db) => {
   app.get('/rides', (req, res) => {
     db.all('SELECT * FROM Rides', (err, rows) => {
       if (err) {
+        logger.error(err);
         return res.send({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error',
@@ -120,6 +125,7 @@ module.exports = (db) => {
   app.get('/rides/:id', (req, res) => {
     db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, (err, rows) => {
       if (err) {
+        logger.error(err);
         return res.send({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error',
