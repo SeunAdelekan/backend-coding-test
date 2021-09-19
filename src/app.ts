@@ -1,21 +1,18 @@
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
+import { Database } from 'sqlite3';
+import logger from './util/logger';
 
 const app = express();
-
-const bodyParser = require('body-parser');
-
 const jsonParser = bodyParser.json();
-
-const swaggerUI = require('swagger-ui-express');
-const YAML = require('yamljs');
 
 const swaggerDoc = YAML.load('./docs/swagger.yml');
 
-const logger = require('./util/logger');
-
-module.exports = (db) => {
+export default (db: Database) => {
   app.use('/documentation', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
-  app.get('/health', (req, res) => res.send('Healthy'));
+  app.get('/health', (_req, res) => res.send('Healthy'));
 
   app.post('/rides', jsonParser, (req, res) => {
     const startLatitude = Number(req.body.start_lat);
@@ -77,7 +74,7 @@ module.exports = (db) => {
       'INSERT INTO Rides(startLat, startLong, endLat, endLong, '
         + 'riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)',
       values,
-      function onComplete(err) {
+      function onComplete(err: Error | null) {
         if (err) {
           logger.error(err.message);
           return res.send({
@@ -86,22 +83,23 @@ module.exports = (db) => {
           });
         }
 
-        return db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, (error, rows) => {
-          if (error) {
-            logger.error(error.message);
-            return res.send({
-              error_code: 'SERVER_ERROR',
-              message: 'Unknown error',
-            });
-          }
+        return db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID,
+          (error: Error | null, rows) => {
+            if (error) {
+              logger.error(error.message);
+              return res.send({
+                error_code: 'SERVER_ERROR',
+                message: 'Unknown error',
+              });
+            }
 
-          return res.send(rows);
-        });
+            return res.send(rows);
+          });
       },
     );
   });
 
-  app.get('/rides', (req, res) => {
+  app.get('/rides', (_req, res) => {
     db.all('SELECT * FROM Rides', (err, rows) => {
       if (err) {
         logger.error(err.message);

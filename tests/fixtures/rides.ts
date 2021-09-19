@@ -7,7 +7,7 @@ const firstRide = {
   riderName: 'Dominic Toretto',
   driverName: 'The Transporter',
   driverVehicle: 'Audi A8 W12',
-  created: "2021-09-18 23:38:06",
+  created: '2021-09-18 23:38:06',
 };
 
 const secondRide = {
@@ -19,7 +19,7 @@ const secondRide = {
   riderName: 'M',
   driverName: 'James Bond',
   driverVehicle: 'Aston Martin DB5',
-  created: "2021-09-18 23:43:53",
+  created: '2021-09-18 23:43:53',
 };
 
-module.exports = [firstRide, secondRide];
+export default [firstRide, secondRide];

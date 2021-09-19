@@ -1,6 +1,6 @@
-const winston = require('winston');
+import * as winston from 'winston';
 
-const logger = winston.createLogger({
+const logger: winston.Logger = winston.createLogger({
   defaultMeta: { service: 'ride-service' },
   level: 'info',
   format: winston.format.json(),
@@ -16,4 +16,4 @@ logger.add(
   }),
 );
 
-module.exports = logger;
+export default logger;
