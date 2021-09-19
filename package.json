@@ -22,6 +22,7 @@
     "express": "^4.16.4",
     "sqlite3": "^4.0.6",
     "swagger-ui-express": "^4.1.6",
+    "winston": "^3.3.3",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
