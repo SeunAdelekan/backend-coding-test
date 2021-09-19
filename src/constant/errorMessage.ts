@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   UNKNOWN_ERROR: 'Unknown error',
   RIDES_NOT_FOUND: 'Could not find any rides',
   INVALID_START_COORDINATE: 'Start latitude and longitude must be between -90 - 90 and -180 to 180'

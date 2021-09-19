@@ -62,3 +62,6 @@ typings/
 
 # IDE Configuration directory
 .idea
+
+# TSC build outputDir
+build

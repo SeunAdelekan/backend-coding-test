@@ -1,15 +1,17 @@
-const supertest = require('supertest');
-const { expect, assert } = require('chai');
-const sqlite3 = require('sqlite3').verbose();
-const sinon = require('sinon');
+import supertest from 'supertest';
+import { expect, assert } from 'chai';
+import sqlite3 from 'sqlite3';
+import sinon from 'sinon';
+import bootstrapApp from '../src/app';
+import resolveDBManager from './dbManager';
+import ERROR_MESSAGE from '../src/constant/errorMessage';
+import ERROR_CODE from '../src/constant/errorCode';
+import rideFixtures from './fixtures/rides';
+import { RideRequest } from '../src/types';
 
-const db = new sqlite3.Database(':memory:');
-const app = require('../src/app')(db);
-const dbManager = require('./dbManager')(db);
-
-const ERROR_MESSAGE = require('../src/constant/errorMessage');
-const ERROR_CODE = require('../src/constant/errorCode');
-const rideFixtures = require('./fixtures/rides');
+const db = new (sqlite3.verbose()).Database(':memory:');
+const app = bootstrapApp(db);
+const dbManager = resolveDBManager(db);
 
 const request = supertest(app);
 
@@ -35,7 +37,7 @@ describe('API tests', () => {
       await dbManager.cleanup();
     });
 
-    const payload = {
+    const payload: RideRequest = {
       start_lat: 48.858222,
       start_long: 2.2945,
       end_lat: 48.861111,
@@ -45,7 +47,7 @@ describe('API tests', () => {
       driver_vehicle: 'Audi A8 W12',
     };
 
-    const createRide = async (data) => request.post('/rides')
+    const createRide = async (data: RideRequest) => request.post('/rides')
       .send(data)
       .set('Accept', 'application/json')
       .expect(200)
@@ -102,7 +104,7 @@ describe('API tests', () => {
     });
 
     it('should return a server error when a DB selection fails after insertion', async () => {
-      sinon.stub(db, 'run').callsArgOnWith(2, { lastID: 1 }, false)
+      sinon.stub(db, 'run').callsArgOnWith(2, { lastID: 1 }, false);
       sinon.stub(db, 'all').yields(dbConnectionError);
 
       const res = await createRide(payload);
@@ -144,7 +146,7 @@ describe('API tests', () => {
     });
 
     it('should return a list of created rides', async () => {
-      sinon.stub(db, 'all').yields(false, rideFixtures)
+      sinon.stub(db, 'all').yields(false, rideFixtures);
 
       const res = await getRides();
 
@@ -155,12 +157,10 @@ describe('API tests', () => {
   describe('GET /rides/:rideID', () => {
     afterEach(() => sinon.restore());
 
-    const getRidesByID = async (rideID) => {
-      return request.get(`/rides/${rideID}`)
-          .set('Accept', 'application/json')
-          .expect(200)
-          .expect('Content-Type', /json/);
-    }
+    const getRidesByID = async (rideID: Number) => request.get(`/rides/${rideID}`)
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
       sinon.stub(db, 'all').yields(dbConnectionError);
@@ -184,10 +184,10 @@ describe('API tests', () => {
     });
 
     it('should return a ride matching the rideID when it exists', async () => {
-      sinon.stub(db, 'all').yields(false, [rideFixtures[0]])
+      sinon.stub(db, 'all').yields(false, [rideFixtures[0]]);
       const res = await getRidesByID(1);
 
-      expect(res.body).to.eql([rideFixtures[0]])
+      expect(res.body).to.eql([rideFixtures[0]]);
     });
   });
 });
