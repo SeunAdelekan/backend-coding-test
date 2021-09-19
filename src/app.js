@@ -79,7 +79,7 @@ module.exports = (db) => {
       values,
       function onComplete(err) {
         if (err) {
-          logger.error(err);
+          logger.error(err.message);
           return res.send({
             error_code: 'SERVER_ERROR',
             message: 'Unknown error',
@@ -88,7 +88,7 @@ module.exports = (db) => {
 
         return db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID, (error, rows) => {
           if (error) {
-            logger.error(error);
+            logger.error(error.message);
             return res.send({
               error_code: 'SERVER_ERROR',
               message: 'Unknown error',
@@ -104,7 +104,7 @@ module.exports = (db) => {
   app.get('/rides', (req, res) => {
     db.all('SELECT * FROM Rides', (err, rows) => {
       if (err) {
-        logger.error(err);
+        logger.error(err.message);
         return res.send({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error',
@@ -125,7 +125,7 @@ module.exports = (db) => {
   app.get('/rides/:id', (req, res) => {
     db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, (err, rows) => {
       if (err) {
-        logger.error(err);
+        logger.error(err.message);
         return res.send({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error',
