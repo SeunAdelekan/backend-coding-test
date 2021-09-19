@@ -10,6 +10,7 @@
     "test": "mocha tests",
     "start": "node index.js",
     "coverage": "nyc npm run test",
+    "prepare": "husky install",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'tests/**/*.{js,jsx,ts,tsx}'",
     "lint-fix": "npm run lint -- --fix"
   },
