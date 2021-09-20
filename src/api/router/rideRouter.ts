@@ -9,6 +9,6 @@ const router = Router();
 
 router.post('/', bodyParser.json(), validate(validationSchemas.createRide, ValidationType.Body), createRide);
 router.get('/', validate(validationSchemas.getRides, ValidationType.Query), getRides);
-router.get('/:id', getRideByID);
+router.get('/:id', validate(validationSchemas.getRideByID, ValidationType.Params), getRideByID);
 
 export default router;

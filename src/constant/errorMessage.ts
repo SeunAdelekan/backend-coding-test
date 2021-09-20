@@ -10,4 +10,5 @@ export default {
   INVALID_DRIVER_VEHICLE: 'Driver vehicle must be a non empty string',
   INVALID_PAGE: 'Page must be an integer greater than zero',
   INVALID_LIMIT: 'Limit must be an integer greater than zero',
+  INVALID_RIDE_ID: 'A ride ID must be an integer greater than zero',
 };

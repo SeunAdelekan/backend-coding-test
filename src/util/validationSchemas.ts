@@ -45,4 +45,11 @@ export default {
       .min(1)
       .error(new Error(ERROR_MESSAGE.INVALID_LIMIT)),
   }),
+  getRideByID: Joi.object({
+    id: Joi.number()
+      .integer()
+      .min(1)
+      .required()
+      .error(new Error(ERROR_MESSAGE.INVALID_RIDE_ID)),
+  }),
 };

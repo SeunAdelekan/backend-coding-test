@@ -152,6 +152,25 @@ describe('API tests', () => {
       });
     });
 
+    it('should return a validation error when malicious SQL query strings are used', async () => {
+      const maliciousSQLOne = '1\'); DELETE FROM Rides; --';
+      const maliciousSQLTwo = '2\' OR \'j\'=\'j", "2\'); DELETE FROM Rides; --';
+
+      const testData = [
+        { key: 'page', value: maliciousSQLOne, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
+        { key: 'limit', value: maliciousSQLTwo, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT }
+      ];
+
+      for (const data of testData) {
+        const res = await getRides({ [data.key]: data.value });
+
+        expect(res.body).to.eql({
+          error_code: ERROR_CODE.VALIDATION_ERROR,
+          message: data.expectedMessage,
+        });
+      }
+    });
+
     it('should return a validation error when invalid pagination params are used', async () => {
       const testData = [
         { key: 'page', value: 0, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
@@ -225,10 +244,10 @@ describe('API tests', () => {
     });
   });
 
-  describe('GET /rides/:rideID', () => {
+  describe('GET /rides/:id', () => {
     afterEach(() => sinon.restore());
 
-    const getRidesByID = async (rideID: Number) => request.get(`/rides/${rideID}`)
+    const getRideByID = async (rideID: Number | string) => request.get(`/rides/${rideID}`)
       .set('Accept', 'application/json')
       .expect(200)
       .expect('Content-Type', /json/);
@@ -236,7 +255,7 @@ describe('API tests', () => {
     it('should return a server error when retrieval from DB fails', async () => {
       sinon.stub(db, 'all').rejects(dbConnectionError);
 
-      const res = await getRidesByID(1);
+      const res = await getRideByID(1);
 
       expect(res.body).to.eql({
         error_code: ERROR_CODE.SERVER_ERROR,
@@ -246,7 +265,7 @@ describe('API tests', () => {
 
     it('should return a rides not found error when no ride matching the rideID exists', async () => {
       sinon.stub(db, 'all').resolves([]);
-      const res = await getRidesByID(1);
+      const res = await getRideByID(1);
 
       expect(res.body).to.eql({
         error_code: ERROR_CODE.RIDES_NOT_FOUND,
@@ -254,9 +273,24 @@ describe('API tests', () => {
       });
     });
 
+    it('should return a validation error when an unacceptable ride ID is used', async () => {
+      const maliciousIDOne = '1\'); DELETE FROM Rides; --';
+      const maliciousIDTwo = '1\' OR \'a\'=\'a", "1\'); DELETE FROM items; --';
+      const testIDs = ['hello world', -1, 0, maliciousIDOne, maliciousIDTwo];
+
+      for (const id of testIDs) {
+        const res = await getRideByID(id);
+
+        expect(res.body).to.eql({
+          error_code: ERROR_CODE.VALIDATION_ERROR,
+          message: ERROR_MESSAGE.INVALID_RIDE_ID,
+        });
+      }
+    });
+
     it('should return a ride matching the rideID when it exists', async () => {
       sinon.stub(db, 'all').resolves([rideFixtures[0]]);
-      const res = await getRidesByID(1);
+      const res = await getRideByID(1);
 
       expect(res.body).to.eql([rideFixtures[0]]);
     });
