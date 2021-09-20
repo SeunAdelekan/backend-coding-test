@@ -142,7 +142,7 @@ describe('API tests', () => {
       const testData = [
         { key: 'page', value: 0, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
         { key: 'limit', value: -1, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
-        { key: 'offset', value: "hello world", expectedMessage: ERROR_MESSAGE.INVALID_OFFSET }
+        { key: 'skip', value: "hello world", expectedMessage: ERROR_MESSAGE.INVALID_SKIP }
       ];
 
       for (let data of testData) {
@@ -175,7 +175,7 @@ describe('API tests', () => {
 
     it('should return a correct result when HTTP request is paginated', async () => {
       await seeder.seedRides(rideFixtures);
-      const res = await getRides({ page: 2, limit: 2, offset: 1 });
+      const res = await getRides({ page: 2, limit: 2, skip: 1 });
 
       expect(res.body.length).to.eql(2);
 

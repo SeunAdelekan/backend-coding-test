@@ -10,5 +10,5 @@ export default {
   INVALID_DRIVER_VEHICLE: 'Driver vehicle must be a non empty string',
   INVALID_PAGE: 'Page must be a number greater than zero',
   INVALID_LIMIT: 'Limit must be a number greater than zero',
-  INVALID_OFFSET: 'Offset must be a number greater than zero',
+  INVALID_SKIP: 'Skip must be a number greater than zero',
 };
