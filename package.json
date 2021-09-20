@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "ts-node ./index.ts",
-    "test": "mocha --require ts-node/register tests/**/*.test.ts",
+    "test": "mocha --parallel --require ts-node/register tests/**/*.test.ts",
     "test:coverage": "nyc npm run test",
     "prepare": "husky install",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' 'tests/**/*.{js,jsx,ts,tsx}'",
