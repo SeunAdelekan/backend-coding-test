@@ -11,4 +11,5 @@ export default {
   INVALID_PAGE: 'Page must be an integer greater than zero',
   INVALID_LIMIT: 'Limit must be an integer greater than zero',
   INVALID_RIDE_ID: 'A ride ID must be an integer greater than zero',
+  RATE_LIMIT_EXCEEDED: 'Rate limit exceeded. Try again later.',
 };
