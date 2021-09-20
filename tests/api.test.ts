@@ -98,7 +98,8 @@ describe('API tests', () => {
         { key: 'driver_vehicle', value: '', expectedMessage: ERROR_MESSAGE.INVALID_DRIVER_VEHICLE },
       ];
 
-      for (const props of data) {
+      for (let i = 0; i < data.length; i += 1) {
+        const props = data[i];
         const res = await createRide({ ...payload, [props.key]: props.value });
         expect(res.body).to.eql({
           error_code: 'VALIDATION_ERROR', message: props.expectedMessage,
@@ -159,7 +160,8 @@ describe('API tests', () => {
         { key: 'limit', value: maliciousSQLTwo, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
       ];
 
-      for (const data of testData) {
+      for (let i = 0; i < testData.length; i += 1) {
+        const data = testData[i];
         const res = await getRides({ [data.key]: data.value });
 
         expect(res.body).to.eql({
@@ -177,7 +179,8 @@ describe('API tests', () => {
         { key: 'limit', value: 1.5, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
       ];
 
-      for (const data of testData) {
+      for (let i = 0; i < testData.length; i += 1) {
+        const data = testData[i];
         const res = await getRides({ [data.key]: data.value });
 
         expect(res.body).to.eql({
@@ -276,7 +279,8 @@ describe('API tests', () => {
       const maliciousIDTwo = '1\' OR \'a\'=\'a", "1\'); DELETE FROM items; --';
       const testIDs = ['hello world', -1, 0, maliciousIDOne, maliciousIDTwo];
 
-      for (const id of testIDs) {
+      for (let i = 0; i < testIDs.length; i += 1) {
+        const id = testIDs[i];
         const res = await getRideByID(id);
 
         expect(res.body).to.eql({

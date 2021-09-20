@@ -7,8 +7,8 @@ import resolveSeeder from './seeder';
 import rideFixtures from './fixtures/rides';
 import { DBManager, Seeder } from '../src/types';
 import RideService from '../src/service/rideService';
-import { parseRideDataForAssertion } from './util/objectUtil';
-import { rideNotFoundError } from '../src/error/error';
+import parseRideDataForAssertion from './util/objectUtil';
+import rideNotFoundError from '../src/error/error';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -66,15 +66,18 @@ describe('RideService tests', () => {
 
       expect(rides.length).to.eql(1);
 
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[0]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[0]));
     });
 
     it('should return a correct paginated list of rides', async () => {
       await seeder.seedRides(rideFixtures);
       const rides = await rideService.getRides({ page: 2, limit: 2 });
 
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[2]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[2]));
     });
   });
 
@@ -89,7 +92,8 @@ describe('RideService tests', () => {
       const rides = await rideService.getRideByID(2);
 
       expect(rides.length).to.eql(1);
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[1]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[1]));
     });
   });
 });

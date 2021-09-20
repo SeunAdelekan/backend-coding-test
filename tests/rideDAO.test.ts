@@ -6,7 +6,7 @@ import resolveSeeder from './seeder';
 import rideFixtures from './fixtures/rides';
 import { DBManager, Ride, Seeder } from '../src/types';
 import RideDAO from '../src/dao/rideDAO';
-import { parseRideDataForAssertion } from './util/objectUtil';
+import parseRideDataForAssertion from './util/objectUtil';
 
 describe('RideDAO tests', () => {
   let db: Database;
@@ -63,8 +63,9 @@ describe('RideDAO tests', () => {
 
       expect(rides.length).to.eql(5);
 
-      for (let i = 0; i < rides.length; i++) {
-        expect(parseRideDataForAssertion(rides[i])).to.eql(parseRideDataForAssertion(rideFixtures[i]));
+      for (let i = 0; i < rides.length; i += 1) {
+        expect(parseRideDataForAssertion(rides[i]))
+          .to.eql(parseRideDataForAssertion(rideFixtures[i]));
       }
     });
 
@@ -72,8 +73,10 @@ describe('RideDAO tests', () => {
       await seeder.seedRides(rideFixtures);
       const rides = await rideDAO.getRides({ page: 2, limit: 2 });
 
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[2]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[2]));
     });
   });
 
@@ -89,7 +92,8 @@ describe('RideDAO tests', () => {
       const rides = await rideDAO.getRideByID(2);
 
       expect(rides.length).to.eql(1);
-      expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[1]));
+      expect(parseRideDataForAssertion(rides[0]))
+        .to.eql(parseRideDataForAssertion(rideFixtures[1]));
     });
   });
 });
