@@ -4,6 +4,7 @@ import sqlite3 from 'sqlite3';
 import sinon from 'sinon';
 import bootstrapApp from '../src/app';
 import resolveDBManager from './dbManager';
+import resolveSeeder from './seeder';
 import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
@@ -12,6 +13,7 @@ import { RideRequest } from '../src/types';
 const db = new (sqlite3.verbose()).Database(':memory:');
 const app = bootstrapApp(db);
 const dbManager = resolveDBManager(db);
+const seeder = resolveSeeder(db);
 
 const request = supertest(app);
 
@@ -119,7 +121,8 @@ describe('API tests', () => {
   describe('GET /rides', () => {
     afterEach(() => sinon.restore());
 
-    const getRides = async () => request.get('/rides')
+    const getRides = async (query = {}) => request.get('/rides')
+      .query(query)
       .set('Accept', 'application/json')
       .expect(200)
       .expect('Content-Type', /json/);
@@ -133,6 +136,23 @@ describe('API tests', () => {
         error_code: ERROR_CODE.SERVER_ERROR,
         message: ERROR_MESSAGE.UNKNOWN_ERROR,
       });
+    });
+
+    it('should return a validation error when invalid pagination params are used', async () => {
+      const testData = [
+        { key: 'page', value: 0, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
+        { key: 'limit', value: -1, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
+        { key: 'offset', value: "hello world", expectedMessage: ERROR_MESSAGE.INVALID_OFFSET }
+      ];
+
+      for (let data of testData) {
+        const res = await getRides({ [data.key]: data.value });
+
+        expect(res.body).to.eql({
+          error_code: ERROR_CODE.VALIDATION_ERROR,
+          message: data.expectedMessage,
+        });
+      }
     });
 
     it('should return a rides not found error when no rides have been created', async () => {
@@ -151,6 +171,42 @@ describe('API tests', () => {
       const res = await getRides();
 
       expect(res.body).to.eql(rideFixtures);
+    });
+
+    it('should return a correct result when HTTP request is paginated', async () => {
+      await seeder.seedRides(rideFixtures);
+      const res = await getRides({ page: 2, limit: 2, offset: 1 });
+
+      expect(res.body.length).to.eql(2);
+
+      delete res.body[0].created;
+      delete res.body[1].created;
+
+      const secondRide = rideFixtures[1];
+      const thirdRide = rideFixtures[2];
+
+      expect(res.body).to.eql([
+          {
+            rideID: secondRide.rideID,
+            startLat: secondRide.startLat,
+            startLong: secondRide.startLong,
+            endLat: secondRide.endLat,
+            endLong: secondRide.endLong,
+            riderName: secondRide.riderName,
+            driverName: secondRide.driverName,
+            driverVehicle: secondRide.driverVehicle,
+          },
+        {
+          rideID: thirdRide.rideID,
+          startLat: thirdRide.startLat,
+          startLong: thirdRide.startLong,
+          endLat: thirdRide.endLat,
+          endLong: thirdRide.endLong,
+          riderName: thirdRide.riderName,
+          driverName: thirdRide.driverName,
+          driverVehicle: thirdRide.driverVehicle,
+        }
+      ]);
     });
   });
 

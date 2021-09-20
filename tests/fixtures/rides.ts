@@ -22,4 +22,40 @@ const secondRide = {
   created: '2021-09-18 23:43:53',
 };
 
-export default [firstRide, secondRide];
+const thirdRide = {
+  rideID: 3,
+  startLat: 0.858222,
+  startLong: 0.2945,
+  endLat: 3.861111,
+  endLong: 3.335833,
+  riderName: 'M',
+  driverName: 'James Bond',
+  driverVehicle: 'Aston Martin DB5',
+  created: '2021-09-18 23:43:53',
+};
+
+const fourthRide = {
+  rideID: 4,
+  startLat: 9.858222,
+  startLong: 3.2945,
+  endLat: 3.861111,
+  endLong: 3.335833,
+  riderName: 'M',
+  driverName: 'James Bond',
+  driverVehicle: 'Aston Martin DB5',
+  created: '2021-09-18 23:43:53',
+};
+
+const fifthRide = {
+  rideID: 5,
+  startLat: 22.858222,
+  startLong: 56.2945,
+  endLat: 3.861111,
+  endLong: 3.335833,
+  riderName: 'M',
+  driverName: 'James Bond',
+  driverVehicle: 'Aston Martin DB5',
+  created: '2021-09-18 23:43:53',
+};
+
+export default [firstRide, secondRide, thirdRide, fourthRide, fifthRide];
