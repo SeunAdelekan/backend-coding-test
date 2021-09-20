@@ -152,6 +152,25 @@ describe('API tests', () => {
       });
     });
 
+    it('should return a validation error when malicious SQL query strings are used', async () => {
+      const maliciousSQLOne = '1\'); DELETE FROM Rides; --';
+      const maliciousSQLTwo = '2\' OR \'j\'=\'j", "2\'); DELETE FROM Rides; --';
+
+      const testData = [
+        { key: 'page', value: maliciousSQLOne, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
+        { key: 'limit', value: maliciousSQLTwo, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT }
+      ];
+
+      for (const data of testData) {
+        const res = await getRides({ [data.key]: data.value });
+
+        expect(res.body).to.eql({
+          error_code: ERROR_CODE.VALIDATION_ERROR,
+          message: data.expectedMessage,
+        });
+      }
+    });
+
     it('should return a validation error when invalid pagination params are used', async () => {
       const testData = [
         { key: 'page', value: 0, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
