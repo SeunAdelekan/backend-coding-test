@@ -2,10 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
-import { Database } from 'sqlite3';
+import { Database } from 'sqlite';
+import { types } from 'util';
 import logger from './util/logger';
 import ERROR_MESSAGE from './constant/errorMessage';
 import ERROR_CODE from './constant/errorCode';
+import { Ride } from './types';
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -16,7 +18,7 @@ export default (db: Database) => {
   app.use('/documentation', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
   app.get('/health', (_req, res) => res.send('Healthy'));
 
-  app.post('/rides', jsonParser, (req, res) => {
+  app.post('/rides', jsonParser, async (req, res) => {
     const startLatitude = Number(req.body.start_lat);
     const startLongitude = Number(req.body.start_long);
     const endLatitude = Number(req.body.end_lat);
@@ -72,36 +74,28 @@ export default (db: Database) => {
       req.body.driver_vehicle,
     ];
 
-    return db.run(
-      'INSERT INTO Rides(startLat, startLong, endLat, endLong, '
-        + 'riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      values,
-      function onComplete(err: Error | null) {
-        if (err) {
-          logger.error(err.message);
-          return res.send({
-            error_code: 'SERVER_ERROR',
-            message: 'Unknown error',
-          });
-        }
+    try {
+      const execResult = await db.run(
+        'INSERT INTO Rides(startLat, startLong, endLat, endLong, '
+          + 'riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        values,
+      );
+      const rides = await db.all<Ride[]>('SELECT * FROM Rides WHERE rideID = ?', execResult.lastID);
 
-        return db.all('SELECT * FROM Rides WHERE rideID = ?', this.lastID,
-          (error: Error | null, rows) => {
-            if (error) {
-              logger.error(error.message);
-              return res.send({
-                error_code: 'SERVER_ERROR',
-                message: 'Unknown error',
-              });
-            }
+      return res.send(rides);
+    } catch (error) {
+      if (types.isNativeError(error)) {
+        logger.error(error.message);
+      }
 
-            return res.send(rows);
-          });
-      },
-    );
+      return res.send({
+        error_code: 'SERVER_ERROR',
+        message: 'Unknown error',
+      });
+    }
   });
 
-  app.get('/rides', (req, res) => {
+  app.get('/rides', async (req, res) => {
     const page = req.query.page ? Number(req.query.page) : 1;
     const limit = req.query.limit ? Number(req.query.limit) : 10;
 
@@ -119,47 +113,54 @@ export default (db: Database) => {
       });
     }
 
-    return db.all(`SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?`,
+    try {
+      const rides = await db.all<Ride[]>(
+        'SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?',
         [limit, (page * limit) - limit],
-        (err, rows) => {
-      if (err) {
-        logger.error(err.message);
-        return res.send({
-          error_code: 'SERVER_ERROR',
-          message: 'Unknown error',
-        });
-      }
+      );
 
-      if (rows.length === 0) {
+      if (rides.length === 0) {
         return res.send({
           error_code: 'RIDES_NOT_FOUND_ERROR',
           message: 'Could not find any rides',
         });
       }
 
-      return res.send(rows);
-    });
+      return res.send(rides);
+    } catch (error) {
+      if (types.isNativeError(error)) {
+        logger.error(error.message);
+      }
+
+      return res.send({
+        error_code: 'SERVER_ERROR',
+        message: 'Unknown error',
+      });
+    }
   });
 
-  app.get('/rides/:id', (req, res) => {
-    db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, (err, rows) => {
-      if (err) {
-        logger.error(err.message);
-        return res.send({
-          error_code: 'SERVER_ERROR',
-          message: 'Unknown error',
-        });
-      }
+  app.get('/rides/:id', async (req, res) => {
+    try {
+      const rides = await db.all<Ride[]>(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`);
 
-      if (rows.length === 0) {
+      if (rides.length === 0) {
         return res.send({
           error_code: 'RIDES_NOT_FOUND_ERROR',
           message: 'Could not find any rides',
         });
       }
 
-      return res.send(rows);
-    });
+      return res.send(rides);
+    } catch (error) {
+      if (types.isNativeError(error)) {
+        logger.error(error.message);
+      }
+
+      return res.send({
+        error_code: 'SERVER_ERROR',
+        message: 'Unknown error',
+      });
+    }
   });
 
   return app;

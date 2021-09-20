@@ -1,3 +1,5 @@
+import { ISqlite } from 'sqlite';
+
 export interface RideRequest {
     start_lat: number,
     start_long: number,
@@ -19,3 +21,7 @@ export interface Ride {
     driverVehicle: string
     created: string
 }
+
+export type DBManager = { cleanup: () => Promise<ISqlite.RunResult>; setup: () => Promise<void> };
+
+export type Seeder = { seedRides: (rides: Ride[]) => Promise<void>; };

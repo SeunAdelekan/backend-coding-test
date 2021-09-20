@@ -2,23 +2,35 @@ import supertest from 'supertest';
 import { expect, assert } from 'chai';
 import sqlite3 from 'sqlite3';
 import sinon from 'sinon';
+import { Database, open } from 'sqlite';
 import bootstrapApp from '../src/app';
 import resolveDBManager from './dbManager';
 import resolveSeeder from './seeder';
 import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
-import { RideRequest } from '../src/types';
-
-const db = new (sqlite3.verbose()).Database(':memory:');
-const app = bootstrapApp(db);
-const dbManager = resolveDBManager(db);
-const seeder = resolveSeeder(db);
-
-const request = supertest(app);
+import { DBManager, RideRequest, Seeder } from '../src/types';
 
 describe('API tests', () => {
-  before(() => dbManager.setup());
+  let db: Database;
+  let app;
+  let dbManager: DBManager;
+  let seeder: Seeder;
+  let request: supertest.SuperTest<supertest.Test>;
+
+  before(async () => {
+    db = await open({
+      filename: ':memory:',
+      driver: sqlite3.Database,
+    });
+
+    app = bootstrapApp(db);
+    dbManager = resolveDBManager(db);
+    seeder = resolveSeeder(db);
+
+    request = supertest(app);
+    await dbManager.setup();
+  });
 
   after(() => dbManager.cleanup());
 
@@ -95,7 +107,7 @@ describe('API tests', () => {
     });
 
     it('should return a server error when a DB insertion fails', async () => {
-      sinon.stub(db, 'run').yields(dbConnectionError);
+      sinon.stub(db, 'run').rejects(dbConnectionError);
 
       const res = await createRide(payload);
 
@@ -107,7 +119,7 @@ describe('API tests', () => {
 
     it('should return a server error when a DB selection fails after insertion', async () => {
       sinon.stub(db, 'run').callsArgOnWith(2, { lastID: 1 }, false);
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await createRide(payload);
 
@@ -128,7 +140,7 @@ describe('API tests', () => {
       .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await getRides();
 
@@ -144,7 +156,7 @@ describe('API tests', () => {
         { key: 'limit', value: -1, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
       ];
 
-      for (let data of testData) {
+      for (const data of testData) {
         const res = await getRides({ [data.key]: data.value });
 
         expect(res.body).to.eql({
@@ -155,7 +167,7 @@ describe('API tests', () => {
     });
 
     it('should return a rides not found error when no rides have been created', async () => {
-      sinon.stub(db, 'all').yields(false, []);
+      sinon.stub(db, 'all').resolves([]);
       const res = await getRides();
 
       expect(res.body).to.eql({
@@ -165,7 +177,7 @@ describe('API tests', () => {
     });
 
     it('should return a list of created rides', async () => {
-      sinon.stub(db, 'all').yields(false, rideFixtures);
+      sinon.stub(db, 'all').resolves(rideFixtures);
 
       const res = await getRides();
 
@@ -218,7 +230,7 @@ describe('API tests', () => {
       .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await getRidesByID(1);
 
@@ -229,7 +241,7 @@ describe('API tests', () => {
     });
 
     it('should return a rides not found error when no ride matching the rideID exists', async () => {
-      sinon.stub(db, 'all').yields(false, []);
+      sinon.stub(db, 'all').resolves([]);
       const res = await getRidesByID(1);
 
       expect(res.body).to.eql({
@@ -239,7 +251,7 @@ describe('API tests', () => {
     });
 
     it('should return a ride matching the rideID when it exists', async () => {
-      sinon.stub(db, 'all').yields(false, [rideFixtures[0]]);
+      sinon.stub(db, 'all').resolves([rideFixtures[0]]);
       const res = await getRidesByID(1);
 
       expect(res.body).to.eql([rideFixtures[0]]);
