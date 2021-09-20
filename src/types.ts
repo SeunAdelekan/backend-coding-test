@@ -25,3 +25,9 @@ export interface Ride {
 export type DBManager = { cleanup: () => Promise<ISqlite.RunResult>; setup: () => Promise<void> };
 
 export type Seeder = { seedRides: (rides: Ride[]) => Promise<void>; };
+
+export enum ValidationType {
+    Body = 'body',
+    Params = 'params',
+    Query = 'query',
+}

@@ -1,6 +1,6 @@
+import { ISqlite } from 'sqlite';
 import { Ride } from '../types';
 import RideDAO from '../dao/rideDAO';
-import {ISqlite} from "sqlite";
 
 export default class RiderService {
   async createRide(ride: Ride): Promise<ISqlite.RunResult> {
