@@ -1,10 +1,11 @@
 import express from 'express';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
-import rideRouter from './api/router/rideRouter';
 import helmet from 'helmet';
-import rateLimit from "express-rate-limit";
-import ERROR_MESSAGE from './constant/errorMessage'
+import rateLimit from 'express-rate-limit';
+import { Database } from 'sqlite';
+import ERROR_MESSAGE from './constant/errorMessage';
+import RideRouter from './api/router/rideRouter';
 
 const app = express();
 const swaggerDoc = YAML.load('./docs/swagger.yml');
@@ -21,10 +22,10 @@ const limiter = rateLimit({
   },
 });
 
-export default () => {
+export default (db: Database) => {
   app.use(helmet());
   app.use('/documentation', limiter, swaggerUI.serve, swaggerUI.setup(swaggerDoc));
-  app.use('/rides', limiter, rideRouter);
+  app.use('/rides', limiter, RideRouter(db));
   app.get('/health', (_req, res) => res.send('Healthy'));
 
   return app;

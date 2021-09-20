@@ -10,7 +10,6 @@ import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
 import { DBManager, RideRequest, Seeder } from '../src/types';
-import RideDAO from '../src/dao/rideDAO';
 
 describe('API tests', () => {
   let db: Database;
@@ -25,8 +24,7 @@ describe('API tests', () => {
       driver: sqlite3.Database,
     });
 
-    RideDAO.injectDB(db);
-    app = bootstrapApp();
+    app = bootstrapApp(db);
     dbManager = resolveDBManager(db);
     seeder = resolveSeeder(db);
 
@@ -158,7 +156,7 @@ describe('API tests', () => {
 
       const testData = [
         { key: 'page', value: maliciousSQLOne, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
-        { key: 'limit', value: maliciousSQLTwo, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT }
+        { key: 'limit', value: maliciousSQLTwo, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
       ];
 
       for (const data of testData) {

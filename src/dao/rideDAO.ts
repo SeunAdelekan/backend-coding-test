@@ -4,11 +4,11 @@ import { Ride } from '../types';
 let db: Database;
 
 export default class RideDAO {
-  static injectDB(database: Database) {
+  constructor(database: Database) {
     db = database;
   }
 
-  static async createRide(ride: Ride): Promise<ISqlite.RunResult> {
+  async createRide(ride: Ride): Promise<ISqlite.RunResult> {
     const values = [
       ride.startLat,
       ride.startLong,
@@ -26,17 +26,17 @@ export default class RideDAO {
     );
   }
 
-  static async getRides({ page, limit } : { page: number, limit: number }): Promise<Ride[]> {
+  async getRides({ page, limit } : { page: number, limit: number }): Promise<Ride[]> {
     return db.all<Ride[]>(
       'SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?',
       [limit, (page * limit) - limit],
     );
   }
 
-  static async getRideByID(rideID: number): Promise<Ride[]> {
+  async getRideByID(rideID: number): Promise<Ride[]> {
     return db.all<Ride[]>(
-        `SELECT * FROM Rides WHERE rideID = ?`,
-        [rideID],
+      'SELECT * FROM Rides WHERE rideID = ?',
+      [rideID],
     );
   }
 }

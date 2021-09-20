@@ -6,7 +6,6 @@ import resolveDBManager from './dbManager';
 import resolveSeeder from './seeder';
 import rideFixtures from './fixtures/rides';
 import { DBManager, Seeder } from '../src/types';
-import RideDAO from '../src/dao/rideDAO';
 import RideService from '../src/service/rideService';
 import { parseRideDataForAssertion } from './util/objectUtil';
 import { rideNotFoundError } from '../src/error/error';
@@ -26,10 +25,9 @@ describe('RideService tests', () => {
       driver: sqlite3.Database,
     });
 
-    RideDAO.injectDB(db);
     dbManager = resolveDBManager(db);
     seeder = resolveSeeder(db);
-    rideService = new RideService();
+    rideService = new RideService(db);
 
     await dbManager.setup();
   });
