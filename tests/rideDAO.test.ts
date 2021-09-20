@@ -12,6 +12,7 @@ describe('RideDAO tests', () => {
   let db: Database;
   let dbManager: DBManager;
   let seeder: Seeder;
+  let rideDAO: RideDAO;
 
   before(async () => {
     db = await open({
@@ -19,7 +20,7 @@ describe('RideDAO tests', () => {
       driver: sqlite3.Database,
     });
 
-    RideDAO.injectDB(db);
+    rideDAO = new RideDAO(db);
     dbManager = resolveDBManager(db);
     seeder = resolveSeeder(db);
 
@@ -43,7 +44,7 @@ describe('RideDAO tests', () => {
         driverName: 'The Transporter',
         driverVehicle: 'Audi A8 W12',
       };
-      const res = await RideDAO.createRide(ride);
+      const res = await rideDAO.createRide(ride);
 
       expect(res.lastID).to.eql(1);
     });
@@ -51,14 +52,14 @@ describe('RideDAO tests', () => {
 
   describe('RideDAO.getRides', () => {
     it('should return an empty list when no ride exists', async () => {
-      const res = await RideDAO.getRides({ page: 1, limit: 2 });
+      const res = await rideDAO.getRides({ page: 1, limit: 2 });
 
       expect(res.length).to.eql(0);
     });
 
     it('should return a list of rides when rides exist', async () => {
       await seeder.seedRides(rideFixtures);
-      const rides = await RideDAO.getRides({ page: 1, limit: 10 });
+      const rides = await rideDAO.getRides({ page: 1, limit: 10 });
 
       expect(rides.length).to.eql(5);
 
@@ -69,7 +70,7 @@ describe('RideDAO tests', () => {
 
     it('should return a correct paginated list of rides', async () => {
       await seeder.seedRides(rideFixtures);
-      const rides = await RideDAO.getRides({ page: 2, limit: 2 });
+      const rides = await rideDAO.getRides({ page: 2, limit: 2 });
 
       expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
       expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[2]));
@@ -78,14 +79,14 @@ describe('RideDAO tests', () => {
 
   describe('RideDAO.getRideByID', () => {
     it('should return an empty list of rides when no ride matching the rideID exists', async () => {
-      const res = await RideDAO.getRideByID(1);
+      const res = await rideDAO.getRideByID(1);
 
       expect(res.length).to.eql(0);
     });
 
     it('should return a list of rides when rides exist', async () => {
       await seeder.seedRides([rideFixtures[0], rideFixtures[1]]);
-      const rides = await RideDAO.getRideByID(2);
+      const rides = await rideDAO.getRideByID(2);
 
       expect(rides.length).to.eql(1);
       expect(parseRideDataForAssertion(rides[0])).to.eql(parseRideDataForAssertion(rideFixtures[1]));
