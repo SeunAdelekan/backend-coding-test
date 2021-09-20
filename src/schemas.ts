@@ -1,4 +1,4 @@
-import { Database } from 'sqlite3';
+import { Database } from "sqlite";
 
 export default (db: Database): Database => {
   const createRideTableSchema = `

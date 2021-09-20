@@ -1,4 +1,4 @@
-import {Database} from "sqlite3";
+import {Database} from "sqlite";
 import {Ride} from "../src/types";
 
 export default (db: Database) => {

@@ -8,17 +8,29 @@ import resolveSeeder from './seeder';
 import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
-import { RideRequest } from '../src/types';
-
-const db = new (sqlite3.verbose()).Database(':memory:');
-const app = bootstrapApp(db);
-const dbManager = resolveDBManager(db);
-const seeder = resolveSeeder(db);
-
-const request = supertest(app);
+import {DBManager, RideRequest, Seeder} from '../src/types';
+import {Database, open} from "sqlite";
 
 describe('API tests', () => {
-  before(() => dbManager.setup());
+  let db: Database;
+  let app;
+  let dbManager: DBManager;
+  let seeder: Seeder;
+  let request: supertest.SuperTest<supertest.Test>;
+
+  before(async () => {
+    db = await open({
+      filename: ':memory:',
+      driver: sqlite3.Database,
+    });
+
+    app = bootstrapApp(db);
+    dbManager = resolveDBManager(db);
+    seeder = resolveSeeder(db);
+
+    request = supertest(app);
+    await dbManager.setup()
+  });
 
   after(() => dbManager.cleanup());
 
@@ -27,9 +39,9 @@ describe('API tests', () => {
   describe('GET /health', () => {
     it('should return health', (done) => {
       request
-        .get('/health')
-        .expect('Content-Type', /text/)
-        .expect(200, done);
+          .get('/health')
+          .expect('Content-Type', /text/)
+          .expect(200, done);
     });
   });
 
@@ -50,10 +62,10 @@ describe('API tests', () => {
     };
 
     const createRide = async (data: RideRequest) => request.post('/rides')
-      .send(data)
-      .set('Accept', 'application/json')
-      .expect(200)
-      .expect('Content-Type', /json/);
+        .send(data)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/);
 
     it('should create a ride', async () => {
       const res = await createRide(payload);
@@ -95,7 +107,7 @@ describe('API tests', () => {
     });
 
     it('should return a server error when a DB insertion fails', async () => {
-      sinon.stub(db, 'run').yields(dbConnectionError);
+      sinon.stub(db, 'run').rejects(dbConnectionError);
 
       const res = await createRide(payload);
 
@@ -107,7 +119,7 @@ describe('API tests', () => {
 
     it('should return a server error when a DB selection fails after insertion', async () => {
       sinon.stub(db, 'run').callsArgOnWith(2, { lastID: 1 }, false);
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await createRide(payload);
 
@@ -122,13 +134,13 @@ describe('API tests', () => {
     afterEach(() => sinon.restore());
 
     const getRides = async (query = {}) => request.get('/rides')
-      .query(query)
-      .set('Accept', 'application/json')
-      .expect(200)
-      .expect('Content-Type', /json/);
+        .query(query)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await getRides();
 
@@ -155,7 +167,7 @@ describe('API tests', () => {
     });
 
     it('should return a rides not found error when no rides have been created', async () => {
-      sinon.stub(db, 'all').yields(false, []);
+      sinon.stub(db, 'all').resolves([]);
       const res = await getRides();
 
       expect(res.body).to.eql({
@@ -165,7 +177,7 @@ describe('API tests', () => {
     });
 
     it('should return a list of created rides', async () => {
-      sinon.stub(db, 'all').yields(false, rideFixtures);
+      sinon.stub(db, 'all').resolves(rideFixtures);
 
       const res = await getRides();
 
@@ -213,12 +225,12 @@ describe('API tests', () => {
     afterEach(() => sinon.restore());
 
     const getRidesByID = async (rideID: Number) => request.get(`/rides/${rideID}`)
-      .set('Accept', 'application/json')
-      .expect(200)
-      .expect('Content-Type', /json/);
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
-      sinon.stub(db, 'all').yields(dbConnectionError);
+      sinon.stub(db, 'all').rejects(dbConnectionError);
 
       const res = await getRidesByID(1);
 
@@ -229,7 +241,7 @@ describe('API tests', () => {
     });
 
     it('should return a rides not found error when no ride matching the rideID exists', async () => {
-      sinon.stub(db, 'all').yields(false, []);
+      sinon.stub(db, 'all').resolves([]);
       const res = await getRidesByID(1);
 
       expect(res.body).to.eql({
@@ -239,7 +251,7 @@ describe('API tests', () => {
     });
 
     it('should return a ride matching the rideID when it exists', async () => {
-      sinon.stub(db, 'all').yields(false, [rideFixtures[0]]);
+      sinon.stub(db, 'all').resolves([rideFixtures[0]]);
       const res = await getRidesByID(1);
 
       expect(res.body).to.eql([rideFixtures[0]]);
