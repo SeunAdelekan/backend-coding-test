@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { createRide, getRides, getRideByID } from '../controller/rideController';
-import validate from "../../middleware/validator";
-import {ValidationType} from "../../types";
-import validationSchemas from "../../util/validationSchemas";
+import validate from '../../middleware/validator';
+import { ValidationType } from '../../types';
+import validationSchemas from '../../util/validationSchemas';
 
 const router = Router();
 
