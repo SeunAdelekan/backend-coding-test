@@ -254,9 +254,10 @@ describe('API tests', () => {
       });
     });
 
-    const maliciousID = '1\'); DELETE FROM Rides; --';
     it('should return a validation error when an unacceptable ride ID is used', async () => {
-      const testIDs = ['hello world', -1, 0, maliciousID];
+      const maliciousIDOne = '1\'); DELETE FROM Rides; --';
+      const maliciousIDTwo = '1\' OR \'a\'=\'a", "1\'); DELETE FROM items; --';
+      const testIDs = ['hello world', -1, 0, maliciousIDOne, maliciousIDTwo];
 
       for (const id of testIDs) {
         const res = await getRideByID(id);
