@@ -20,6 +20,10 @@ A postman collection for testing the API is available for download [here](https:
 * Mocha and supertest for unit and integration tests.
 * SQLite3 as a database.
 * Swagger for API documentation.
+* ESLint as a linter.
+* NYC to enforce code coverage.
+* Git pre-push hook with Husky to run tests.
+* Winston for logging.
 
 ## API Documentation
 Swagger was utilized to thoroughly document the API's endpoints. The documentation can be accessed from a web browser via

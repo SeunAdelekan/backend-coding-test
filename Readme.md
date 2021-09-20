@@ -11,6 +11,8 @@ The goal of these exercises are to assess your proficiency in software engineeri
 5. Run `npm start`
 6. Hit the server to test health `curl localhost:8010/health` and expect a `200` response 
 
+Kindly consult the [project setup guide](SETUP.md) for in-depth details on installing, running the server, and testing the project.
+
 ## Tasks
 
 Below will be your set of tasks to accomplish. Please work on each of these tasks in order. Success criteria will be defined clearly for each task
