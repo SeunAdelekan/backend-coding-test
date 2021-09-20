@@ -4,6 +4,8 @@ import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { Database } from 'sqlite3';
 import logger from './util/logger';
+import ERROR_MESSAGE from './constant/errorMessage';
+import ERROR_CODE from './constant/errorCode';
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -99,8 +101,27 @@ export default (db: Database) => {
     );
   });
 
-  app.get('/rides', (_req, res) => {
-    db.all('SELECT * FROM Rides', (err, rows) => {
+  app.get('/rides', (req, res) => {
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    if (isNaN(page) || page <= 0) {
+      return res.send({
+        error_code: ERROR_CODE.VALIDATION_ERROR,
+        message: ERROR_MESSAGE.INVALID_PAGE,
+      });
+    }
+
+    if (isNaN(limit) || limit <= 0) {
+      return res.send({
+        error_code: ERROR_CODE.VALIDATION_ERROR,
+        message: ERROR_MESSAGE.INVALID_LIMIT,
+      });
+    }
+
+    return db.all(`SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?`,
+        [limit, (page * limit) - limit],
+        (err, rows) => {
       if (err) {
         logger.error(err.message);
         return res.send({
