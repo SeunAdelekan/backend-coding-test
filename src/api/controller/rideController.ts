@@ -73,7 +73,8 @@ export const getRides = async (req: Request, res: Response) => {
 
 export const getRideByID = async (req: Request, res: Response) => {
   try {
-    const rides = await rideService.getRideByID(req.params.rideID);
+    console.log(req.params.id);
+    const rides = await rideService.getRideByID(req.params.id);
 
     return res.send(rides);
   } catch (error: any) {
