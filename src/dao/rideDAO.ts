@@ -33,7 +33,10 @@ export default class RideDAO {
     );
   }
 
-  static async getRideByID(rideID: number | string | undefined): Promise<Ride[]> {
-    return db.all<Ride[]>(`SELECT * FROM Rides WHERE rideID='${rideID}'`);
+  static async getRideByID(rideID: number): Promise<Ride[]> {
+    return db.all<Ride[]>(
+        `SELECT * FROM Rides WHERE rideID = ?`,
+        [rideID],
+    );
   }
 }

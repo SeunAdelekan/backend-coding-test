@@ -47,9 +47,9 @@ export default {
   }),
   getRideByID: Joi.object({
     id: Joi.number()
-        .integer()
-        .min(1)
-        .required()
-        .error(new Error(ERROR_MESSAGE.INVALID_RIDE_ID)),
-  })
+      .integer()
+      .min(1)
+      .required()
+      .error(new Error(ERROR_MESSAGE.INVALID_RIDE_ID)),
+  }),
 };

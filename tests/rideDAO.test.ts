@@ -6,7 +6,7 @@ import resolveSeeder from './seeder';
 import rideFixtures from './fixtures/rides';
 import { DBManager, Ride, Seeder } from '../src/types';
 import RideDAO from '../src/dao/rideDAO';
-import {parseRideDataForAssertion} from "./util/objectUtil";
+import { parseRideDataForAssertion } from './util/objectUtil';
 
 describe('RideDAO tests', () => {
   let db: Database;

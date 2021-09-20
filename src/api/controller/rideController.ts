@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { types } from 'util';
 import logger from '../../util/logger';
 import RideService from '../../service/rideService';
-import ERROR_CODE from "../../constant/errorCode";
-import ERROR_MESSAGE from "../../constant/errorMessage";
+import ERROR_CODE from '../../constant/errorCode';
+import ERROR_MESSAGE from '../../constant/errorMessage';
 
 const rideService = new RideService();
 
@@ -28,7 +28,7 @@ export const createRide = async (req: Request, res: Response) => {
       driverVehicle,
     });
 
-    const rides = await rideService.getRideByID(execResult.lastID);
+    const rides = await rideService.getRideByID(execResult.lastID as number);
 
     return res.send(rides);
   } catch (error: any) {
@@ -73,8 +73,7 @@ export const getRides = async (req: Request, res: Response) => {
 
 export const getRideByID = async (req: Request, res: Response) => {
   try {
-    console.log(req.params.id);
-    const rides = await rideService.getRideByID(req.params.id);
+    const rides = await rideService.getRideByID(Number(req.params.id));
 
     return res.send(rides);
   } catch (error: any) {

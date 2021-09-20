@@ -256,9 +256,9 @@ describe('API tests', () => {
 
     const maliciousID = '1\'); DELETE FROM Rides; --';
     it('should return a validation error when an unacceptable ride ID is used', async () => {
-      const testIDs = ['hello world', -1, 0, maliciousID]
+      const testIDs = ['hello world', -1, 0, maliciousID];
 
-      for (let id of testIDs) {
+      for (const id of testIDs) {
         const res = await getRideByID(id);
 
         expect(res.body).to.eql({
