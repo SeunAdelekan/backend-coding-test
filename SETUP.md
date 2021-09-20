@@ -160,8 +160,30 @@ The following are the HTTP status codes that can be received from the server in 
 | 200          | The server has completed the execution of the request.|
 
 ## Tests
-Unit and integration tests were written to verify the correctness of the system.
-Tests can be run with the following command:
+Tests were written to verify the correctness of the system.
+Unit and integration tests can be run with the following command:
 ```bash
 npm test
 ```
+
+### Load Testing
+Load tests were written for the API to verify that it gives acceptable performance under load. The tools used for load testing
+are:
+* Artillery: An NPM load testing and functional testing library.
+* start-server-and-test: Used to start the server, wait for it, run test command and shut it down.
+
+> Important Note: Artillary's version `1.6.2` was used instead of a more recent `7.*.*` variant in order to ensure
+compatibility with the specified Node.js runtime version, i.e `node (>8.6 and <= 10)`. This is because newer versions of
+Artillary are incompatible with Node.js `10.0.0` and lower.
+
+Load tests can be run with the command below:
+```bash
+npm run test:load
+```
+
+### Load test configurations
+The configuration file and scenarios used to execute the test can be found in project's `./artillery` directory at
+`./artillery/config.yml` and `./artillery/scenerios.yml` respectively. Requests were setup to execute at in initial rate
+of `150rps` for `30s` after which they are ramped up to `1000rps` for `30s`. `p99` is under `50ms` for all endpoints.  
+
+![Load test results](assets/images/load-test-summary-report.png?raw=true "")

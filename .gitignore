@@ -65,3 +65,5 @@ typings/
 
 # TSC build outputDir
 build
+
+artillery/reports

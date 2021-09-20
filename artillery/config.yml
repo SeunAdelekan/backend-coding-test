@@ -1,0 +1,13 @@
+config:
+  target: "http://localhost:8010"
+  phases:
+    - duration: 30
+      arrivalRate: 150
+      name: Required minimum load
+    - duration: 30
+      arrivalRate: 150
+      rampTo: 1000
+      name: Increased traffic load
+  ensure:
+    p99: 49
+    maxErrorRate: 1

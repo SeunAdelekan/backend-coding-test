@@ -14,7 +14,7 @@ import { rideNotFoundError } from '../src/error/error';
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-describe('RideDAO tests', () => {
+describe('RideService tests', () => {
   let db: Database;
   let dbManager: DBManager;
   let seeder: Seeder;
