@@ -1,9 +1,9 @@
 import { ISqlite } from 'sqlite';
 import { Ride } from '../types';
 import RideDAO from '../dao/rideDAO';
-import {RideNotFoundError} from "../error/error";
+import {rideNotFoundError} from "../error/error";
 
-export default class RiderService {
+export default class RideService {
   async createRide(ride: Ride): Promise<ISqlite.RunResult> {
     return RideDAO.createRide(ride);
   }
@@ -12,7 +12,7 @@ export default class RiderService {
     const rides = await RideDAO.getRideByID(rideID);
 
     if (rides.length === 0) {
-      throw RideNotFoundError;
+      throw rideNotFoundError;
     }
 
     return rides;
@@ -22,7 +22,7 @@ export default class RiderService {
     const rides = await RideDAO.getRides({ page, limit });
 
     if (rides.length === 0) {
-      throw RideNotFoundError;
+      throw rideNotFoundError;
     }
 
     return rides;

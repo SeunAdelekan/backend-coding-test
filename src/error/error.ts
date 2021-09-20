@@ -10,7 +10,7 @@ class ServiceError extends Error {
     }
 }
 
-export const RideNotFoundError = new ServiceError({
+export const rideNotFoundError = new ServiceError({
     errorCode: ERROR_CODE.RIDES_NOT_FOUND,
     message: ERROR_MESSAGE.RIDES_NOT_FOUND,
 });

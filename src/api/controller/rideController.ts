@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 
 import { types } from 'util';
 import logger from '../../util/logger';
-import RiderService from '../../service/riderService';
+import RideService from '../../service/rideService';
 import ERROR_CODE from "../../constant/errorCode";
 import ERROR_MESSAGE from "../../constant/errorMessage";
 
-const rideService = new RiderService();
+const rideService = new RideService();
 
 export const createRide = async (req: Request, res: Response) => {
   const startLatitude = Number(req.body.start_lat);
