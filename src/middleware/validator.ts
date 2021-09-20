@@ -3,7 +3,9 @@ import { Schema } from '@hapi/joi';
 import { ValidationType } from '../types';
 import ERROR_CODE from '../constant/errorCode';
 
-export default (schema: Schema, validationType: ValidationType) => (req: Request, res: Response, next: NextFunction) => {
+export default (schema: Schema, validationType: ValidationType) => (
+  req: Request, res: Response, next: NextFunction,
+) => {
   let data;
 
   if (validationType === ValidationType.Body) {
@@ -20,7 +22,7 @@ export default (schema: Schema, validationType: ValidationType) => (req: Request
     return next();
   }
 
-  res.send({
+  return res.send({
     error_code: ERROR_CODE.VALIDATION_ERROR,
     message: validationResult.error?.message,
   });

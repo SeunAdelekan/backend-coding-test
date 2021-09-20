@@ -1,6 +1,6 @@
 import { Ride } from '../../src/types';
 
-export const parseRideDataForAssertion = (ride: Ride) => ({
+const parseRideDataForAssertion = (ride: Ride) => ({
   rideID: ride.rideID,
   startLat: ride.startLat,
   startLong: ride.startLong,
@@ -10,3 +10,5 @@ export const parseRideDataForAssertion = (ride: Ride) => ({
   driverName: ride.driverName,
   driverVehicle: ride.driverVehicle,
 });
+
+export default parseRideDataForAssertion;

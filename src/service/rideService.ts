@@ -1,7 +1,7 @@
 import { Database, ISqlite } from 'sqlite';
 import { Ride } from '../types';
 import RideDAO from '../dao/rideDAO';
-import { rideNotFoundError } from '../error/error';
+import rideNotFoundError from '../error/error';
 
 export default class RideService {
   private rideDAO: RideDAO;
