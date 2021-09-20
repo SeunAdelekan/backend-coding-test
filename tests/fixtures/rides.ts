@@ -28,9 +28,9 @@ const thirdRide = {
   startLong: 0.2945,
   endLat: 3.861111,
   endLong: 3.335833,
-  riderName: 'M',
-  driverName: 'James Bond',
-  driverVehicle: 'Aston Martin DB5',
+  riderName: 'Donda',
+  driverName: 'College Dropout',
+  driverVehicle: 'Mercedes',
   created: '2021-09-18 23:43:53',
 };
 
@@ -40,9 +40,9 @@ const fourthRide = {
   startLong: 3.2945,
   endLat: 3.861111,
   endLong: 3.335833,
-  riderName: 'M',
-  driverName: 'James Bond',
-  driverVehicle: 'Aston Martin DB5',
+  riderName: 'Tom Ford',
+  driverName: 'Henry Ford',
+  driverVehicle: 'Ford',
   created: '2021-09-18 23:43:53',
 };
 
@@ -52,9 +52,9 @@ const fifthRide = {
   startLong: 56.2945,
   endLat: 3.861111,
   endLong: 3.335833,
-  riderName: 'M',
-  driverName: 'James Bond',
-  driverVehicle: 'Aston Martin DB5',
+  riderName: 'Kevin Snow',
+  driverName: 'Chris James',
+  driverVehicle: 'Honde Accord',
   created: '2021-09-18 23:43:53',
 };
 
