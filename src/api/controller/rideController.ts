@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import { types } from 'util';
 import logger from '../../util/logger';
 import RiderService from '../../service/riderService';
+import ERROR_CODE from "../../constant/errorCode";
+import ERROR_MESSAGE from "../../constant/errorMessage";
 
 const rideService = new RiderService();
 
@@ -29,14 +31,18 @@ export const createRide = async (req: Request, res: Response) => {
     const rides = await rideService.getRideByID(execResult.lastID);
 
     return res.send(rides);
-  } catch (error) {
+  } catch (error: any) {
     if (types.isNativeError(error)) {
       logger.error(error.message);
     }
 
+    if (error && error.errorCode && error.message) {
+      return res.send({ error_code: error.errorCode, message: error.message });
+    }
+
     return res.send({
-      error_code: 'SERVER_ERROR',
-      message: 'Unknown error',
+      error_code: ERROR_CODE.SERVER_ERROR,
+      message: ERROR_MESSAGE.UNKNOWN_ERROR,
     });
   }
 };
@@ -48,22 +54,19 @@ export const getRides = async (req: Request, res: Response) => {
   try {
     const rides = await rideService.getRides({ page, limit });
 
-    if (rides.length === 0) {
-      return res.send({
-        error_code: 'RIDES_NOT_FOUND_ERROR',
-        message: 'Could not find any rides',
-      });
-    }
-
     return res.send(rides);
-  } catch (error) {
+  } catch (error: any) {
     if (types.isNativeError(error)) {
       logger.error(error.message);
     }
 
+    if (error && error.errorCode && error.message) {
+      return res.send({ error_code: error.errorCode, message: error.message });
+    }
+
     return res.send({
-      error_code: 'SERVER_ERROR',
-      message: 'Unknown error',
+      error_code: ERROR_CODE.SERVER_ERROR,
+      message: ERROR_MESSAGE.UNKNOWN_ERROR,
     });
   }
 };
@@ -72,22 +75,19 @@ export const getRideByID = async (req: Request, res: Response) => {
   try {
     const rides = await rideService.getRideByID(req.params.rideID);
 
-    if (rides.length === 0) {
-      return res.send({
-        error_code: 'RIDES_NOT_FOUND_ERROR',
-        message: 'Could not find any rides',
-      });
-    }
-
     return res.send(rides);
-  } catch (error) {
+  } catch (error: any) {
     if (types.isNativeError(error)) {
       logger.error(error.message);
     }
 
+    if (error && error.errorCode && error.message) {
+      return res.send({ error_code: error.errorCode, message: error.message });
+    }
+
     return res.send({
-      error_code: 'SERVER_ERROR',
-      message: 'Unknown error',
+      error_code: ERROR_CODE.SERVER_ERROR,
+      message: ERROR_MESSAGE.UNKNOWN_ERROR,
     });
   }
 };
