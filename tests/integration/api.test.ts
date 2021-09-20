@@ -3,13 +3,13 @@ import { expect, assert } from 'chai';
 import sqlite3 from 'sqlite3';
 import sinon from 'sinon';
 import { Database, open } from 'sqlite';
-import bootstrapApp from '../src/app';
-import resolveDBManager from './dbManager';
-import resolveSeeder from './seeder';
-import ERROR_MESSAGE from '../src/constant/errorMessage';
-import ERROR_CODE from '../src/constant/errorCode';
-import rideFixtures from './fixtures/rides';
-import { DBManager, RideRequest, Seeder } from '../src/types';
+import bootstrapApp from '../../src/app';
+import resolveDBManager from '../dbManager';
+import resolveSeeder from '../seeder';
+import ERROR_MESSAGE from '../../src/constant/errorMessage';
+import ERROR_CODE from '../../src/constant/errorCode';
+import rideFixtures from '../fixtures/rides';
+import { DBManager, RideRequest, Seeder } from '../../src/types';
 
 describe('API tests', () => {
   let db: Database;

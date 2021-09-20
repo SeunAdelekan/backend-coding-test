@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import sqlite3 from 'sqlite3';
 import { Database, open } from 'sqlite';
-import resolveDBManager from './dbManager';
-import resolveSeeder from './seeder';
-import rideFixtures from './fixtures/rides';
-import { DBManager, Ride, Seeder } from '../src/types';
-import RideDAO from '../src/dao/rideDAO';
-import parseRideDataForAssertion from './util/objectUtil';
+import resolveDBManager from '../dbManager';
+import resolveSeeder from '../seeder';
+import rideFixtures from '../fixtures/rides';
+import { DBManager, Ride, Seeder } from '../../src/types';
+import RideDAO from '../../src/dao/rideDAO';
+import parseRideDataForAssertion from '../util/objectUtil';
 
 describe('RideDAO tests', () => {
   let db: Database;
