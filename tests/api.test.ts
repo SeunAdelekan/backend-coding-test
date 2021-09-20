@@ -10,6 +10,7 @@ import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
 import { DBManager, RideRequest, Seeder } from '../src/types';
+import RideDAO from '../src/dao/rideDAO';
 
 describe('API tests', () => {
   let db: Database;
@@ -24,7 +25,8 @@ describe('API tests', () => {
       driver: sqlite3.Database,
     });
 
-    app = bootstrapApp(db);
+    RideDAO.injectDB(db);
+    app = bootstrapApp();
     dbManager = resolveDBManager(db);
     seeder = resolveSeeder(db);
 

@@ -5,6 +5,7 @@ import { open } from "sqlite";
 import buildSchemas from './src/schemas'
 import logger from './src/util/logger';
 import bootstrapApp from './src/app';
+import RideDAO from "./src/dao/rideDAO";
 
 const port = 8010;
 
@@ -14,7 +15,8 @@ const port = 8010;
         driver: sqlite3.Database,
     });
     buildSchemas(db);
-    const app = bootstrapApp(db);
+    RideDAO.injectDB(db);
+    const app = bootstrapApp();
 
     app.listen(port, () => logger.info(`App started and listening on port ${port}`));
 })();
