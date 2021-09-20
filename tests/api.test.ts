@@ -2,14 +2,14 @@ import supertest from 'supertest';
 import { expect, assert } from 'chai';
 import sqlite3 from 'sqlite3';
 import sinon from 'sinon';
+import { Database, open } from 'sqlite';
 import bootstrapApp from '../src/app';
 import resolveDBManager from './dbManager';
 import resolveSeeder from './seeder';
 import ERROR_MESSAGE from '../src/constant/errorMessage';
 import ERROR_CODE from '../src/constant/errorCode';
 import rideFixtures from './fixtures/rides';
-import {DBManager, RideRequest, Seeder} from '../src/types';
-import {Database, open} from "sqlite";
+import { DBManager, RideRequest, Seeder } from '../src/types';
 
 describe('API tests', () => {
   let db: Database;
@@ -29,7 +29,7 @@ describe('API tests', () => {
     seeder = resolveSeeder(db);
 
     request = supertest(app);
-    await dbManager.setup()
+    await dbManager.setup();
   });
 
   after(() => dbManager.cleanup());
@@ -39,9 +39,9 @@ describe('API tests', () => {
   describe('GET /health', () => {
     it('should return health', (done) => {
       request
-          .get('/health')
-          .expect('Content-Type', /text/)
-          .expect(200, done);
+        .get('/health')
+        .expect('Content-Type', /text/)
+        .expect(200, done);
     });
   });
 
@@ -62,10 +62,10 @@ describe('API tests', () => {
     };
 
     const createRide = async (data: RideRequest) => request.post('/rides')
-        .send(data)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Type', /json/);
+      .send(data)
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Type', /json/);
 
     it('should create a ride', async () => {
       const res = await createRide(payload);
@@ -134,10 +134,10 @@ describe('API tests', () => {
     afterEach(() => sinon.restore());
 
     const getRides = async (query = {}) => request.get('/rides')
-        .query(query)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Type', /json/);
+      .query(query)
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
       sinon.stub(db, 'all').rejects(dbConnectionError);
@@ -156,7 +156,7 @@ describe('API tests', () => {
         { key: 'limit', value: -1, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
       ];
 
-      for (let data of testData) {
+      for (const data of testData) {
         const res = await getRides({ [data.key]: data.value });
 
         expect(res.body).to.eql({
@@ -225,9 +225,9 @@ describe('API tests', () => {
     afterEach(() => sinon.restore());
 
     const getRidesByID = async (rideID: Number) => request.get(`/rides/${rideID}`)
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Type', /json/);
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Type', /json/);
 
     it('should return a server error when retrieval from DB fails', async () => {
       sinon.stub(db, 'all').rejects(dbConnectionError);

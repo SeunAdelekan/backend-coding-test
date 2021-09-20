@@ -3,11 +3,11 @@ import bodyParser from 'body-parser';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { Database } from 'sqlite';
+import { types } from 'util';
 import logger from './util/logger';
 import ERROR_MESSAGE from './constant/errorMessage';
 import ERROR_CODE from './constant/errorCode';
-import {types} from "util";
-import {Ride} from "./types";
+import { Ride } from './types';
 
 const app = express();
 const jsonParser = bodyParser.json();
@@ -76,9 +76,9 @@ export default (db: Database) => {
 
     try {
       const execResult = await db.run(
-          'INSERT INTO Rides(startLat, startLong, endLat, endLong, '
+        'INSERT INTO Rides(startLat, startLong, endLat, endLong, '
           + 'riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)',
-          values
+        values,
       );
       const rides = await db.all<Ride[]>('SELECT * FROM Rides WHERE rideID = ?', execResult.lastID);
 
@@ -115,8 +115,8 @@ export default (db: Database) => {
 
     try {
       const rides = await db.all<Ride[]>(
-          `SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?`,
-          [limit, (page * limit) - limit]
+        'SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?',
+        [limit, (page * limit) - limit],
       );
 
       if (rides.length === 0) {

@@ -1,4 +1,4 @@
-import {ISqlite} from "sqlite";
+import { ISqlite } from 'sqlite';
 
 export interface RideRequest {
     start_lat: number,
