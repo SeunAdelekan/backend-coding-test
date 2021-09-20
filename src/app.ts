@@ -103,20 +103,12 @@ export default (db: Database) => {
 
   app.get('/rides', (req, res) => {
     const page = req.query.page ? Number(req.query.page) : 1;
-    const skip = req.query.skip ? Number(req.query.skip) : 0;
     const limit = req.query.limit ? Number(req.query.limit) : 10;
 
     if (isNaN(page) || page <= 0) {
       return res.send({
         error_code: ERROR_CODE.VALIDATION_ERROR,
         message: ERROR_MESSAGE.INVALID_PAGE,
-      });
-    }
-
-    if (isNaN(skip) || skip < 0) {
-      return res.send({
-        error_code: ERROR_CODE.VALIDATION_ERROR,
-        message: ERROR_MESSAGE.INVALID_SKIP,
       });
     }
 
@@ -128,7 +120,7 @@ export default (db: Database) => {
     }
 
     return db.all(`SELECT * FROM Rides ORDER BY rideID ASC LIMIT ? OFFSET ?`,
-        [limit, (page * skip) - skip],
+        [limit, (page * limit) - limit],
         (err, rows) => {
       if (err) {
         logger.error(err.message);

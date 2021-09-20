@@ -142,7 +142,6 @@ describe('API tests', () => {
       const testData = [
         { key: 'page', value: 0, expectedMessage: ERROR_MESSAGE.INVALID_PAGE },
         { key: 'limit', value: -1, expectedMessage: ERROR_MESSAGE.INVALID_LIMIT },
-        { key: 'skip', value: "hello world", expectedMessage: ERROR_MESSAGE.INVALID_SKIP }
       ];
 
       for (let data of testData) {
@@ -175,27 +174,17 @@ describe('API tests', () => {
 
     it('should return a correct result when HTTP request is paginated', async () => {
       await seeder.seedRides(rideFixtures);
-      const res = await getRides({ page: 2, limit: 2, skip: 1 });
+      const res = await getRides({ page: 2, limit: 2 });
 
       expect(res.body.length).to.eql(2);
 
       delete res.body[0].created;
       delete res.body[1].created;
 
-      const secondRide = rideFixtures[1];
       const thirdRide = rideFixtures[2];
+      const fourthRide = rideFixtures[3];
 
       expect(res.body).to.eql([
-          {
-            rideID: secondRide.rideID,
-            startLat: secondRide.startLat,
-            startLong: secondRide.startLong,
-            endLat: secondRide.endLat,
-            endLong: secondRide.endLong,
-            riderName: secondRide.riderName,
-            driverName: secondRide.driverName,
-            driverVehicle: secondRide.driverVehicle,
-          },
         {
           rideID: thirdRide.rideID,
           startLat: thirdRide.startLat,
@@ -205,7 +194,17 @@ describe('API tests', () => {
           riderName: thirdRide.riderName,
           driverName: thirdRide.driverName,
           driverVehicle: thirdRide.driverVehicle,
-        }
+        },
+        {
+          rideID: fourthRide.rideID,
+          startLat: fourthRide.startLat,
+          startLong: fourthRide.startLong,
+          endLat: fourthRide.endLat,
+          endLong: fourthRide.endLong,
+          riderName: fourthRide.riderName,
+          driverName: fourthRide.driverName,
+          driverVehicle: fourthRide.driverVehicle,
+        },
       ]);
     });
   });

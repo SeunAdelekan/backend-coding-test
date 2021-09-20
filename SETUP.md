@@ -77,6 +77,13 @@ Sample response:
 ### GET /rides
 This endpoint gets a list of created rides from the backend.
 
+*Query Parameters*
+
+| Parameter   | Description                               | 
+|-------------|-------------------------------------------|
+| page   | Requested data page. Defaults to 1 if not given. |
+| limit   | Max number of records to be retrieved per page. Defaults to 10 if not given. |
+
 Sample response:
 ```json
 [

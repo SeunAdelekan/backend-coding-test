@@ -46,6 +46,17 @@ paths:
       operationId: "getRides"
       produces:
         - "application/json"
+      parameters:
+        - in: "query"
+          name: "page"
+          description: "Requested data page. Defaults to 1 if not given."
+          type: "integer"
+          format: "int64"
+        - in: "query"
+          name: "limit"
+          description: "Max number of records to be retrieved per page. Defaults to 10 if not given."
+          type: "integer"
+          format: "int64"
       responses:
         200:
           description: "The rides were successfully retrieved."
